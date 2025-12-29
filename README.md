@@ -5,7 +5,7 @@
 
 ### 1. 安装JDK
 - **版本要求**: JDK 17 或更高版本（推荐LTS版本）
-- **下载地址**: [Adoptium (OpenJDK)](https://adoptium.net/)
+- **下载地址**: [Adoptium (OpenJDK)](https://adoptium.net/zh-CN/temurin/releases?version=17&os=any&arch=any)
 - **验证安装**: 打开终端，输入以下命令检查版本
   ```bash
   java --version
