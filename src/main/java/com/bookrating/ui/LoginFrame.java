@@ -44,28 +44,44 @@ public class LoginFrame extends JFrame {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println("登录按钮被点击"); // 调试信息
+
                 String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());
 
+                System.out.println("用户名: " + username); // 调试信息
+                System.out.println("密码长度: " + password.length()); // 调试信息
+
                 if (username.isEmpty() || password.isEmpty()) {
+                    System.out.println("用户名或密码为空"); // 调试信息
                     JOptionPane.showMessageDialog(LoginFrame.this,
                             "用户名和密码不能为空！", "错误", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
-                // 验证登录
-                User user = userDAO.authenticate(username, password);
-                if (user != null) {
+                try {
+                    System.out.println("开始验证用户..."); // 调试信息
+                    // 验证登录
+                    User user = userDAO.authenticate(username, password);
+
+                    if (user != null) {
+                        System.out.println("登录成功，用户: " + user.getUsername()); // 调试信息
+                        JOptionPane.showMessageDialog(LoginFrame.this,
+                                "登录成功！欢迎 " + user.getUsername(), "成功", JOptionPane.INFORMATION_MESSAGE);
+                        openMainFrame(user);
+                    } else {
+                        System.out.println("用户名或密码错误"); // 调试信息
+                        JOptionPane.showMessageDialog(LoginFrame.this,
+                                "用户名或密码错误！", "错误", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (Exception ex) {
+                    System.out.println("登录过程中出现异常: " + ex.getMessage()); // 调试信息
+                    ex.printStackTrace();
                     JOptionPane.showMessageDialog(LoginFrame.this,
-                            "登录成功！欢迎 " + user.getUsername(), "成功", JOptionPane.INFORMATION_MESSAGE);
-                    openMainFrame(user);
-                } else {
-                    JOptionPane.showMessageDialog(LoginFrame.this,
-                            "用户名或密码错误！", "错误", JOptionPane.ERROR_MESSAGE);
+                            "登录失败: " + ex.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
-
         // 注册按钮事件
         registerButton.addActionListener(new ActionListener() {
             @Override

@@ -15,6 +15,149 @@ $MySQLPassword = ""
 $DatabaseName = "book_rating_db"
 $SqlScriptFile = "database/book_rating.sql"
 
+# Function to show database information
+function Show-DatabaseInfo {
+    Write-Host ""
+    Write-Host "========================================" -ForegroundColor Cyan
+    Write-Host "   Database Information" -ForegroundColor Cyan
+    Write-Host "========================================" -ForegroundColor Cyan
+    Write-Host ""
+    
+    # Check if database exists
+    $checkDbSQL = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$DatabaseName';"
+    $dbExists = & $MySQLPath @mysqlArgs -e $checkDbSQL 2>$null
+    
+    if (-not $dbExists) {
+        Write-Host "Database '$DatabaseName' does not exist" -ForegroundColor Red
+        return
+    }
+    
+    Write-Host "Database: $DatabaseName" -ForegroundColor Green
+    Write-Host "Host: $MySQLHost`:$MySQLPort" -ForegroundColor Gray
+    Write-Host "User: $MySQLUser" -ForegroundColor Gray
+    Write-Host ""
+    
+    # Show tables
+    Write-Host "=== Tables in Database ===" -ForegroundColor Yellow
+    $showTablesSQL = "USE $DatabaseName; SHOW TABLES;"
+    & $MySQLPath @mysqlArgs -e $showTablesSQL
+    
+    Write-Host ""
+    
+    # Show table details
+    $tableDetailsSQL = @"
+USE $DatabaseName;
+SELECT 
+    TABLE_NAME as 'Table',
+    TABLE_ROWS as 'Rows',
+    DATA_LENGTH as 'Data Size (bytes)',
+    INDEX_LENGTH as 'Index Size (bytes)',
+    CREATE_TIME as 'Created',
+    UPDATE_TIME as 'Last Updated'
+FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_SCHEMA = '$DatabaseName'
+ORDER BY TABLE_NAME;
+"@
+    
+    Write-Host "=== Table Details ===" -ForegroundColor Yellow
+    & $MySQLPath @mysqlArgs -e $tableDetailsSQL
+    
+    Write-Host ""
+    
+    # Show record counts
+    $recordCountSQL = @"
+USE $DatabaseName;
+SELECT 'Users' as 'Table', COUNT(*) as 'Records' FROM users
+UNION ALL
+SELECT 'Books', COUNT(*) FROM books
+UNION ALL
+SELECT 'Ratings', COUNT(*) FROM ratings;
+"@
+    
+    Write-Host "=== Record Counts ===" -ForegroundColor Yellow
+    & $MySQLPath @mysqlArgs -e $recordCountSQL
+    
+    Write-Host ""
+    
+    # Show sample data
+    Write-Host "=== Sample Data ===" -ForegroundColor Yellow
+    
+    # Users sample
+    $usersSampleSQL = @"
+USE $DatabaseName;
+SELECT 
+    id as 'ID',
+    username as 'Username',
+    email as 'Email',
+    role as 'Role',
+    created_at as 'Created'
+FROM users 
+ORDER BY id 
+LIMIT 5;
+"@
+    
+    Write-Host "Users (first 5):" -ForegroundColor Gray
+    & $MySQLPath @mysqlArgs -e $usersSampleSQL
+    
+    Write-Host ""
+    
+    # Books sample
+    $booksSampleSQL = @"
+USE $DatabaseName;
+SELECT 
+    id as 'ID',
+    title as 'Title',
+    author as 'Author',
+    category as 'Category',
+    average_rating as 'Avg Rating'
+FROM books 
+ORDER BY average_rating DESC 
+LIMIT 5;
+"@
+    
+    Write-Host "Top Rated Books:" -ForegroundColor Gray
+    & $MySQLPath @mysqlArgs -e $booksSampleSQL
+    
+    Write-Host ""
+    
+    # Ratings sample
+    $ratingsSampleSQL = @"
+USE $DatabaseName;
+SELECT 
+    r.id as 'Rating ID',
+    u.username as 'User',
+    b.title as 'Book',
+    r.rating as 'Rating',
+    LEFT(r.comment, 50) as 'Comment (first 50 chars)',
+    r.created_at as 'Rated At'
+FROM ratings r
+JOIN users u ON r.user_id = u.id
+JOIN books b ON r.book_id = b.id
+ORDER BY r.created_at DESC
+LIMIT 5;
+"@
+    
+    Write-Host "Recent Ratings:" -ForegroundColor Gray
+    & $MySQLPath @mysqlArgs -e $ratingsSampleSQL
+    
+    Write-Host ""
+    
+    # Database size
+    $dbSizeSQL = @"
+SELECT 
+    '$DatabaseName' as 'Database',
+    ROUND(SUM(DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024, 2) as 'Size (MB)'
+FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_SCHEMA = '$DatabaseName';
+"@
+    
+    Write-Host "=== Database Size ===" -ForegroundColor Yellow
+    & $MySQLPath @mysqlArgs -e $dbSizeSQL
+    
+    Write-Host ""
+    Write-Host "========================================" -ForegroundColor Cyan
+}
+
 # Auto-find MySQL path
 Write-Host "Looking for MySQL..." -ForegroundColor Yellow
 
@@ -70,10 +213,11 @@ Write-Host "Select operation:" -ForegroundColor Yellow
 Write-Host "1. Initialize database (create database and tables)"
 Write-Host "2. Reset database (drop and recreate)"
 Write-Host "3. Execute SQL script only"
-Write-Host "4. Exit"
+Write-Host "4. View database information"
+Write-Host "5. Exit"
 Write-Host ""
 
-$choice = Read-Host "Enter choice (1-4)"
+$choice = Read-Host "Enter choice (1-5)"
 Write-Host ""
 
 # Build MySQL connection arguments
@@ -115,6 +259,9 @@ switch ($choice) {
         }
         
         Write-Host "Database initialization completed" -ForegroundColor Green
+        
+        # Show database info after initialization
+        Show-DatabaseInfo
     }
     
     "2" {
@@ -155,6 +302,9 @@ switch ($choice) {
         }
         
         Write-Host "Database reset completed" -ForegroundColor Green
+        
+        # Show database info after reset
+        Show-DatabaseInfo
     }
     
     "3" {
@@ -183,9 +333,17 @@ switch ($choice) {
         }
         
         Write-Host "SQL script executed successfully" -ForegroundColor Green
+        
+        # Show database info after execution
+        Show-DatabaseInfo
     }
     
     "4" {
+        # View database information
+        Show-DatabaseInfo
+    }
+    
+    "5" {
         Write-Host "Exiting" -ForegroundColor Cyan
         exit 0
     }
@@ -197,54 +355,19 @@ switch ($choice) {
     }
 }
 
-# Verify database
-Write-Host ""
-Write-Host "Verifying database..." -ForegroundColor Yellow
-
-$verifySQL = @"
-USE $DatabaseName;
-SHOW TABLES;
-SELECT 'Users' as 'Table', COUNT(*) as 'Records' FROM users
-UNION ALL
-SELECT 'Books', COUNT(*) FROM books
-UNION ALL
-SELECT 'Ratings', COUNT(*) FROM ratings;
-SELECT 
-    b.title as 'Book Title',
-    b.author as 'Author',
-    FORMAT(b.average_rating, 2) as 'Avg Rating',
-    COUNT(r.id) as 'Rating Count'
-FROM books b
-LEFT JOIN ratings r ON b.id = r.book_id
-GROUP BY b.id
-ORDER BY b.average_rating DESC
-LIMIT 5;
-"@
-
-Write-Host "Database structure:" -ForegroundColor Gray
-& $MySQLPath @mysqlArgs $DatabaseName -e "$verifySQL"
-
-if ($LASTEXITCODE -eq 0) {
+# Only show next steps if we performed an initialization operation
+if ($choice -in @("1", "2", "3")) {
     Write-Host ""
-    Write-Host "Database setup verified successfully!" -ForegroundColor Green
-    Write-Host "Database: $DatabaseName" -ForegroundColor Cyan
-    Write-Host "Host: $MySQLHost`:$MySQLPort" -ForegroundColor Cyan
-    Write-Host "User: $MySQLUser" -ForegroundColor Cyan
+    Write-Host "========================================" -ForegroundColor Cyan
+    Write-Host "Next steps:" -ForegroundColor Yellow
+    Write-Host "1. Update Java database connection:" -ForegroundColor Gray
+    Write-Host "   File: src/main/java/com/bookrating/dao/DatabaseConnection.java" -ForegroundColor Gray
+    Write-Host "   Update URL: jdbc:mysql://$($MySQLHost):$($MySQLPort)/$($DatabaseName)" -ForegroundColor Gray
+    Write-Host "   Update username and password" -ForegroundColor Gray
+    Write-Host ""
+    Write-Host "2. Run the Book Rating System:" -ForegroundColor Gray
+    Write-Host "   .\run.ps1" -ForegroundColor Gray
+    Write-Host "========================================" -ForegroundColor Cyan
 }
-else {
-    Write-Host "Database verification failed" -ForegroundColor Red
-}
-
-Write-Host ""
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "Next steps:" -ForegroundColor Yellow
-Write-Host "1. Update Java database connection:" -ForegroundColor Gray
-Write-Host "   File: src/main/java/com/bookrating/dao/DatabaseConnection.java" -ForegroundColor Gray
-Write-Host "   Update URL: jdbc:mysql://$($MySQLHost):$($MySQLPort)/$($DatabaseName)" -ForegroundColor Gray
-Write-Host "   Update username and password" -ForegroundColor Gray
-Write-Host ""
-Write-Host "2. Run the Book Rating System:" -ForegroundColor Gray
-Write-Host "   .\run.ps1" -ForegroundColor Gray
-Write-Host "========================================" -ForegroundColor Cyan
 
 Read-Host "Press Enter to exit"

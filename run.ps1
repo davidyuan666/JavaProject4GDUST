@@ -196,11 +196,17 @@ switch ($choice) {
         }
         
         # Build classpath
+        # 在编译和运行部分，确保类路径正确
         $classpath = "."
         if (Test-Path "lib") {
-            $libFiles = Get-ChildItem -Path "lib" -Filter "*.jar" -ErrorAction SilentlyContinue
+            $libFiles = Get-ChildItem -Path "lib" -Filter "*.jar"
             if ($libFiles.Count -gt 0) {
-                $classpath = ".;lib/*"
+                # 构建类路径：当前目录 + 所有jar文件
+                $classpath = "."
+                foreach ($jar in $libFiles) {
+                    $classpath += ";lib/$($jar.Name)"
+                }
+                Write-Host "Classpath: $classpath" -ForegroundColor Gray
             }
         }
         

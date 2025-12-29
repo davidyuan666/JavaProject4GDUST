@@ -3,6 +3,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "TestDatabaseConnection",
+            "request": "launch",
+            "mainClass": "TestDatabaseConnection",
+            "projectName": "JavaProject4GDUST_9c6ab84a"
+        },
+        {
+            "type": "java",
+            "name": "QuickTest",
+            "request": "launch",
+            "mainClass": "QuickTest",
+            "projectName": "JavaProject4GDUST_9c6ab84a"
+        },
+        {
+            "type": "java",
             "name": "LoginFrame",
             "request": "launch",
             "mainClass": "com.bookrating.ui.LoginFrame",
