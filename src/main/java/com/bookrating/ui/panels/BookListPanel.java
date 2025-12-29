@@ -31,17 +31,22 @@ public class BookListPanel extends BasePanel {
 
         JLabel searchLabel = new JLabel("搜索图书:");
         searchLabel.setFont(LABEL_FONT);
-        searchLabel.setForeground(new Color(60, 60, 60));
+        searchLabel.setForeground(Color.BLACK); // 黑色文字
 
         searchField = new JTextField(25);
         searchField.setFont(TEXT_FONT);
         searchField.setPreferredSize(new Dimension(300, 38));
         searchField.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(200, 200, 200)),
+                BorderFactory.createLineBorder(new Color(150, 150, 150)),
                 BorderFactory.createEmptyBorder(8, 12, 8, 12)));
 
+        // 创建按钮 - 浅色背景，黑色文字
         JButton searchButton = createStyledButton("搜索", PRIMARY_COLOR, 14);
         JButton refreshButton = createStyledButton("刷新", SUCCESS_COLOR, 14);
+
+        // 确保按钮文字为黑色
+        searchButton.setForeground(Color.BLACK);
+        refreshButton.setForeground(Color.BLACK);
 
         searchPanel.add(searchLabel);
         searchPanel.add(searchField);
@@ -67,9 +72,9 @@ public class BookListPanel extends BasePanel {
         bookTable = new JTable(bookTableModel);
         bookTable.setFont(SMALL_FONT);
         bookTable.setRowHeight(35);
-        bookTable.setSelectionBackground(new Color(220, 240, 255));
-        bookTable.setSelectionForeground(Color.BLACK);
-        bookTable.setGridColor(new Color(230, 230, 230));
+        bookTable.setSelectionBackground(new Color(200, 230, 255)); // 浅蓝色选中背景
+        bookTable.setSelectionForeground(Color.BLACK); // 黑色选中文字
+        bookTable.setGridColor(new Color(220, 220, 220));
         bookTable.setShowGrid(true);
 
         // 设置交替行颜色
@@ -86,18 +91,27 @@ public class BookListPanel extends BasePanel {
                     } else {
                         c.setBackground(new Color(248, 248, 248));
                     }
+                    c.setForeground(Color.BLACK);
+                } else {
+                    c.setBackground(new Color(200, 230, 255)); // 浅蓝色选中背景
+                    c.setForeground(Color.BLACK); // 黑色选中文字
                 }
 
                 return c;
             }
         });
 
-        // 设置表头 - 使用更清晰的样式
-        bookTable.getTableHeader().setFont(new Font("Microsoft YaHei", Font.BOLD, 14));
-        bookTable.getTableHeader().setBackground(TABLE_HEADER_BG);
-        bookTable.getTableHeader().setForeground(TABLE_HEADER_FG);
+        // 设置表头 - 浅灰色背景，黑色文字
+        bookTable.getTableHeader().setFont(TABLE_HEADER_FONT);
+        bookTable.getTableHeader().setBackground(new Color(240, 240, 240)); // 浅灰色背景
+        bookTable.getTableHeader().setForeground(Color.BLACK); // 黑色文字
         bookTable.getTableHeader().setReorderingAllowed(false);
-        bookTable.getTableHeader().setPreferredSize(new Dimension(0, 40)); // 增加表头高度
+        bookTable.getTableHeader().setPreferredSize(new Dimension(0, 40));
+
+        // 设置表头边框 - 灰色边框
+        bookTable.getTableHeader().setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
+                BorderFactory.createEmptyBorder(8, 10, 8, 10)));
 
         // 设置列宽
         bookTable.getColumnModel().getColumn(0).setPreferredWidth(60);
@@ -118,23 +132,29 @@ public class BookListPanel extends BasePanel {
                     double rating = (Double) value;
                     setText(String.format("%.2f", rating));
 
-                    // 根据评分设置颜色 - 使用更亮的颜色
-                    if (rating >= 4.5) {
-                        setForeground(new Color(39, 174, 96)); // 亮绿色
-                        setFont(getFont().deriveFont(Font.BOLD));
-                    } else if (rating >= 3.5) {
-                        setForeground(new Color(243, 156, 18)); // 亮橙色
-                    } else if (rating >= 2.5) {
-                        setForeground(new Color(192, 57, 43)); // 亮红色
+                    // 根据评分设置颜色
+                    if (isSelected) {
+                        setForeground(Color.BLACK); // 选中时黑色文字
                     } else {
-                        setForeground(new Color(127, 140, 141)); // 灰色
+                        if (rating >= 4.5) {
+                            setForeground(new Color(0, 128, 0)); // 深绿色
+                            setFont(getFont().deriveFont(Font.BOLD));
+                        } else if (rating >= 3.5) {
+                            setForeground(new Color(255, 140, 0)); // 橙色
+                        } else if (rating >= 2.5) {
+                            setForeground(new Color(220, 0, 0)); // 红色
+                        } else {
+                            setForeground(new Color(100, 100, 100)); // 深灰色
+                        }
                     }
                 }
 
                 setHorizontalAlignment(SwingConstants.CENTER);
 
                 // 设置背景色
-                if (!isSelected) {
+                if (isSelected) {
+                    c.setBackground(new Color(200, 230, 255)); // 浅蓝色选中背景
+                } else {
                     if (row % 2 == 0) {
                         c.setBackground(Color.WHITE);
                     } else {
@@ -156,13 +176,17 @@ public class BookListPanel extends BasePanel {
                         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
                                 column);
 
-                        // 设置背景色
-                        if (!isSelected) {
+                        // 设置背景色和文字颜色
+                        if (isSelected) {
+                            c.setBackground(new Color(200, 230, 255)); // 浅蓝色选中背景
+                            c.setForeground(Color.BLACK); // 黑色选中文字
+                        } else {
                             if (row % 2 == 0) {
                                 c.setBackground(Color.WHITE);
                             } else {
                                 c.setBackground(new Color(248, 248, 248));
                             }
+                            c.setForeground(Color.BLACK); // 黑色文字
                         }
 
                         setHorizontalAlignment(SwingConstants.CENTER);
