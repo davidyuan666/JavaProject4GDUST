@@ -1,0 +1,27 @@
+# 编译输出
+bin/
+*.class
+
+# IDE配置
+.vscode/
+.idea/
+
+# 依赖库（通常不提交，通过构建工具管理）
+# lib/*.jar
+!lib/README.md  # 可以保留一个说明文件
+
+# 数据库文件（如果使用文件数据库）
+*.db
+
+# 日志文件
+*.log
+logs/
+
+# 临时文件
+tmp/
+temp/
+*~
+
+# 系统文件
+.DS_Store
+Thumbs.db
