@@ -7,10 +7,10 @@ import java.sql.SQLException;
 public class DatabaseConnection {
     private static final String URL = "jdbc:mysql://localhost:3306/book_rating_db";
     private static final String USERNAME = "root";
-    private static final String PASSWORD = "password";
-    
+    private static final String PASSWORD = "123456";
+
     private static Connection connection = null;
-    
+
     static {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -18,7 +18,7 @@ public class DatabaseConnection {
             e.printStackTrace();
         }
     }
-    
+
     public static Connection getConnection() {
         if (connection == null) {
             try {
@@ -31,7 +31,7 @@ public class DatabaseConnection {
         }
         return connection;
     }
-    
+
     public static void closeConnection() {
         if (connection != null) {
             try {
