@@ -161,8 +161,91 @@ A: 确保项目根目录有正确的项目文件：
 
 ---
 
+## 📚 图书打分系统项目
+
+### 项目简介
+这是一个完整的图书打分系统，使用Java Swing作为GUI界面，MySQL作为数据库。系统包含用户管理、图书管理、评分系统等功能。
+
+### 项目结构
+```
+JavaProject4GDUST/
+├── src/main/java/com/bookrating/
+│   ├── Main.java                    # 程序入口
+│   ├── model/                       # 数据模型
+│   │   ├── User.java               # 用户模型
+│   │   ├── Book.java               # 图书模型
+│   │   └── Rating.java             # 评分模型
+│   ├── dao/                        # 数据访问层
+│   │   ├── DatabaseConnection.java # 数据库连接
+│   │   ├── UserDAO.java            # 用户数据访问
+│   │   ├── BookDAO.java            # 图书数据访问
+│   │   └── RatingDAO.java          # 评分数据访问
+│   ├── ui/                         # 用户界面
+│   │   ├── LoginFrame.java         # 登录界面
+│   │   ├── RegisterFrame.java      # 注册界面
+│   │   └── MainFrame.java          # 主界面
+│   └── util/                       # 工具类
+├── lib/                            # MySQL驱动等
+├── database/                       # 数据库脚本
+│   └── book_rating.sql             # 数据库初始化脚本
+├── .vscode/                        # VSCode配置
+│   ├── launch.json                 # 启动配置
+│   └── settings.json               # 项目设置
+├── run.bat                         # Windows启动脚本
+├── run.ps1                         # PowerShell启动脚本
+├── PROJECT_GUIDE.md                # 项目详细指南
+├── MYSQL_SETUP.md                  # MySQL安装指南
+└── README.md                       # 项目说明
+```
+
+### 功能特点
+1. **用户认证系统**：注册、登录、个人资料
+2. **图书管理**：查看图书列表、搜索图书
+3. **评分系统**：1-5星评分、评论功能
+4. **数据统计**：平均评分、用户评分记录
+5. **数据库集成**：MySQL数据库存储
+6. **GUI界面**：友好的Swing用户界面
+
+### 快速启动
+
+#### 1. 安装MySQL
+- 参考 `MYSQL_SETUP.md` 安装MySQL数据库
+- 执行 `database/book_rating.sql` 初始化数据库
+
+#### 2. 下载MySQL驱动
+- 下载 `mysql-connector-java-8.0.33.jar` 放入 `lib/` 目录
+
+#### 3. 运行程序
+- **Windows**: 双击 `run.bat`
+- **PowerShell**: 运行 `./run.ps1`
+- **VSCode**: 打开 `Main.java`，点击运行按钮
+
+### 默认账户
+- 管理员：`admin` / `admin123`
+- 普通用户：`user1` / `user123`
+- 普通用户：`user2` / `user123`
+
+### 详细文档
+- `PROJECT_GUIDE.md` - 项目详细使用指南
+- `MYSQL_SETUP.md` - MySQL安装配置指南
+
+### 扩展功能建议
+1. 图书管理功能（增删改查）
+2. 用户个人中心
+3. 图书推荐算法
+4. 数据导出功能
+5. 图表展示评分分布
+
+---
+
 ## 📞 技术支持
 如有问题，请检查：
 1. JDK是否正确安装并配置环境变量
 2. VSCode Java扩展是否安装完整
 3. 项目结构是否符合标准
+4. MySQL数据库是否正常运行
+5. MySQL驱动是否在lib目录中
+
+**项目版本**: 1.0.0  
+**最后更新**: 2025年12月29日  
+**适用对象**: 广科Java实训学生
