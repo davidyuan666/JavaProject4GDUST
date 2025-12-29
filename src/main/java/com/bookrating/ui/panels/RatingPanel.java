@@ -59,16 +59,16 @@ public class RatingPanel extends BasePanel {
         panel.setBackground(Color.WHITE);
         panel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(
-                        BorderFactory.createLineBorder(PRIMARY_COLOR, 2),
+                        BorderFactory.createLineBorder(new Color(70, 130, 180), 2),
                         "评分表单",
                         TitledBorder.LEFT,
                         TitledBorder.TOP,
                         TITLE_FONT,
-                        PRIMARY_COLOR),
+                        new Color(70, 130, 180)),
                 BorderFactory.createEmptyBorder(25, 25, 25, 25)));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(12, 12, 12, 12);
+        gbc.insets = new Insets(15, 15, 15, 15);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.WEST;
 
@@ -77,30 +77,47 @@ public class RatingPanel extends BasePanel {
         gbc.gridy = 0;
         JLabel bookLabel = new JLabel("选择图书:");
         bookLabel.setFont(LABEL_FONT);
-        bookLabel.setForeground(new Color(60, 60, 60));
+        bookLabel.setForeground(Color.BLACK);
         panel.add(bookLabel, gbc);
 
         gbc.gridx = 1;
+        gbc.gridwidth = 2;
         bookComboBox = new JComboBox<>();
         bookComboBox.setFont(TEXT_FONT);
-        bookComboBox.setPreferredSize(new Dimension(350, 40));
+        bookComboBox.setPreferredSize(new Dimension(400, 40));
+
+        // 设置下拉列表的渲染器，显示图书名称
+        bookComboBox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value,
+                    int index, boolean isSelected, boolean cellHasFocus) {
+                Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Book) {
+                    Book book = (Book) value;
+                    setText(book.getTitle() + " - " + book.getAuthor());
+                }
+                return c;
+            }
+        });
         panel.add(bookComboBox, gbc);
 
         // 评分
         gbc.gridx = 0;
         gbc.gridy = 1;
+        gbc.gridwidth = 1;
         JLabel ratingLabel = new JLabel("评分 (1-5):");
         ratingLabel.setFont(LABEL_FONT);
-        ratingLabel.setForeground(new Color(60, 60, 60));
+        ratingLabel.setForeground(Color.BLACK);
         panel.add(ratingLabel, gbc);
 
         gbc.gridx = 1;
         SpinnerNumberModel spinnerModel = new SpinnerNumberModel(3.0, 1.0, 5.0, 0.5);
         ratingSpinner = new JSpinner(spinnerModel);
         ratingSpinner.setFont(TEXT_FONT);
-        ratingSpinner.setPreferredSize(new Dimension(120, 40));
+        ratingSpinner.setPreferredSize(new Dimension(150, 40));
         JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) ratingSpinner.getEditor();
         editor.getTextField().setHorizontalAlignment(JTextField.CENTER);
+        editor.getTextField().setFont(TEXT_FONT);
         panel.add(ratingSpinner, gbc);
 
         // 评论
@@ -108,29 +125,31 @@ public class RatingPanel extends BasePanel {
         gbc.gridy = 2;
         JLabel commentLabel = new JLabel("评论:");
         commentLabel.setFont(LABEL_FONT);
-        commentLabel.setForeground(new Color(60, 60, 60));
+        commentLabel.setForeground(Color.BLACK);
         panel.add(commentLabel, gbc);
 
         gbc.gridx = 1;
         gbc.gridwidth = 2;
-        commentArea = new JTextArea(5, 30);
+        gbc.fill = GridBagConstraints.BOTH;
+        commentArea = new JTextArea(8, 40); // 增加行数
         commentArea.setFont(TEXT_FONT);
         commentArea.setLineWrap(true);
         commentArea.setWrapStyleWord(true);
         commentArea.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(200, 200, 200)),
-                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+                BorderFactory.createEmptyBorder(12, 12, 12, 12)));
         JScrollPane commentScroll = new JScrollPane(commentArea);
-        commentScroll.setPreferredSize(new Dimension(400, 120));
+        commentScroll.setPreferredSize(new Dimension(400, 150)); // 增加高度
         panel.add(commentScroll, gbc);
 
         // 提交按钮
         gbc.gridx = 1;
         gbc.gridy = 3;
         gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.NONE;
         gbc.anchor = GridBagConstraints.CENTER;
         JButton submitButton = createStyledButton("提交评分", SUCCESS_COLOR, 16);
-        submitButton.setPreferredSize(new Dimension(200, 50));
+        submitButton.setPreferredSize(new Dimension(180, 45)); // 调整按钮大小
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -147,12 +166,12 @@ public class RatingPanel extends BasePanel {
         panel.setBackground(Color.WHITE);
         panel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder(
-                        BorderFactory.createLineBorder(PRIMARY_COLOR, 2),
+                        BorderFactory.createLineBorder(new Color(70, 130, 180), 2),
                         "我的评分记录",
                         TitledBorder.LEFT,
                         TitledBorder.TOP,
                         TITLE_FONT,
-                        PRIMARY_COLOR),
+                        new Color(70, 130, 180)),
                 BorderFactory.createEmptyBorder(20, 20, 20, 20)));
 
         myRatingsArea = new JTextArea();
@@ -161,10 +180,11 @@ public class RatingPanel extends BasePanel {
         myRatingsArea.setLineWrap(true);
         myRatingsArea.setWrapStyleWord(true);
         myRatingsArea.setBackground(new Color(250, 250, 250));
-        myRatingsArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        myRatingsArea.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
         JScrollPane scrollPane = new JScrollPane(myRatingsArea);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
+        scrollPane.setPreferredSize(new Dimension(400, 250));
         panel.add(scrollPane, BorderLayout.CENTER);
 
         return panel;
