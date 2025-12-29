@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Run Book Rating System",
+            "request": "launch",
+            "mainClass": "com.bookrating.Main",
+            "projectName": "JavaProject4GDUST"
+        },
+        {
+            "type": "java",
+            "name": "Run Login Frame",
+            "request": "launch",
+            "mainClass": "com.bookrating.ui.LoginFrame",
+            "projectName": "JavaProject4GDUST"
+        }
+    ]
+}
