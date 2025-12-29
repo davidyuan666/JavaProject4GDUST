@@ -3,6 +3,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "LoginFrame",
+            "request": "launch",
+            "mainClass": "com.bookrating.ui.LoginFrame",
+            "projectName": "JavaProject4GDUST_9c6ab84a"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "com.bookrating.Main",
+            "projectName": "JavaProject4GDUST_9c6ab84a"
+        },
+        {
+            "type": "java",
             "name": "Run Book Rating System",
             "request": "launch",
             "mainClass": "com.bookrating.Main",
